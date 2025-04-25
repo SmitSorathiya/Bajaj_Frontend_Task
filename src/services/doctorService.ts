@@ -8,8 +8,8 @@ export interface Doctor {
   qualification: string;
   experience: number;
   fees: number;
-  clinic: string;
-  location: string;
+  clinic: string | { name: string; address?: string };
+  location: string | { address: string };
   consultationType: "video" | "clinic" | "both";
 }
 
@@ -24,10 +24,12 @@ export const useDoctors = () => {
       
       const data = await response.json();
       
-      // Ensure each doctor has a specialty array
+      // Ensure each doctor has a specialty array and proper data structure
       return data.map((doctor: any) => ({
         ...doctor,
-        specialty: doctor.specialty || []
+        specialty: doctor.specialty || [],
+        clinic: doctor.clinic || "Unknown Clinic",
+        location: doctor.location || "Unknown Location"
       }));
     },
   });

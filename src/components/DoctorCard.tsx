@@ -17,8 +17,8 @@ export const DoctorCard = ({ doctor }: DoctorCardProps) => {
           <p className="text-gray-600">{doctor.qualification}</p>
           <p className="text-gray-600">{doctor.experience} yrs exp.</p>
           <div className="text-gray-600">
-            <p>{doctor.clinic}</p>
-            <p>{doctor.location}</p>
+            <p>{typeof doctor.clinic === 'string' ? doctor.clinic : (doctor.clinic?.name || 'Unknown Clinic')}</p>
+            <p>{typeof doctor.location === 'string' ? doctor.location : (doctor.location?.address || 'Unknown Location')}</p>
           </div>
         </div>
         <div className="text-right space-y-2">
