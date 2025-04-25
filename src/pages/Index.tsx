@@ -60,8 +60,10 @@ const Index = () => {
 
     // Apply sorting
     if (sortBy === "fees") {
+      // Sort by fees in ascending order (low to high)
       filtered.sort((a, b) => a.fees - b.fees);
     } else if (sortBy === "experience") {
+      // Sort by experience in descending order (high to low)
       filtered.sort((a, b) => b.experience - a.experience);
     }
 
