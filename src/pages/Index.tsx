@@ -95,8 +95,10 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="bg-white shadow-sm py-4 mb-6">
-        <DoctorSearch doctors={doctors} onSearch={setSearchQuery} />
+      <div className="bg-blue-700 py-4 mb-6">
+        <div className="container mx-auto px-4">
+          <DoctorSearch doctors={doctors} onSearch={setSearchQuery} />
+        </div>
       </div>
 
       <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-6">
