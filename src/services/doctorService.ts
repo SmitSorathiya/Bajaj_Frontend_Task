@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 export interface Doctor {
   id: string;
   name: string;
-  specialty: string[];
+  specialty: string[];  // It's required, but we'll add safety checks in components
   qualification: string;
   experience: number;
   fees: number;
@@ -21,7 +21,14 @@ export const useDoctors = () => {
       if (!response.ok) {
         throw new Error("Failed to fetch doctors");
       }
-      return response.json();
+      
+      const data = await response.json();
+      
+      // Ensure each doctor has a specialty array
+      return data.map((doctor: any) => ({
+        ...doctor,
+        specialty: doctor.specialty || []
+      }));
     },
   });
 };
