@@ -20,16 +20,25 @@ const Index = () => {
   );
   const [sortBy, setSortBy] = useState(searchParams.get("sort") || "");
 
-  // Get unique specialties
-  const specialties = [...new Set(doctors.flatMap((d) => d.specialty))];
+  // Get unique specialties from all doctors
+  const allSpecialties = doctors.flatMap((d) => d.specialty || []);
+  const specialties = [...new Set(allSpecialties)].filter(Boolean);
 
-  // Update URL params
+  // Update URL params when filters change
   useEffect(() => {
-    const params = new URLSearchParams();
+    const params = new URLSearchParams(searchParams);
     if (searchQuery) params.set("q", searchQuery);
+    else params.delete("q");
+    
     if (consultationType) params.set("type", consultationType);
+    else params.delete("type");
+    
     if (selectedSpecialties.length) params.set("specialties", selectedSpecialties.join(","));
+    else params.delete("specialties");
+    
     if (sortBy) params.set("sort", sortBy);
+    else params.delete("sort");
+    
     setSearchParams(params);
   }, [searchQuery, consultationType, selectedSpecialties, sortBy]);
 
@@ -39,22 +48,23 @@ const Index = () => {
 
     // Apply search filter
     if (searchQuery) {
+      const query = searchQuery.toLowerCase();
       filtered = filtered.filter((doctor) =>
-        doctor.name.toLowerCase().includes(searchQuery.toLowerCase())
+        doctor.name.toLowerCase().includes(query)
       );
     }
 
     // Apply consultation type filter
     if (consultationType) {
-      filtered = filtered.filter(
-        (doctor) => doctor.consultationType === consultationType
+      filtered = filtered.filter((doctor) =>
+        doctor.consultationType === consultationType || doctor.consultationType === "both"
       );
     }
 
     // Apply specialty filters
     if (selectedSpecialties.length > 0) {
       filtered = filtered.filter((doctor) =>
-        doctor.specialty.some((s) => selectedSpecialties.includes(s))
+        doctor.specialty?.some((s) => selectedSpecialties.includes(s))
       );
     }
 
@@ -79,10 +89,7 @@ const Index = () => {
   };
 
   const handleClearFilters = () => {
-    setSearchQuery("");
-    setConsultationType("");
     setSelectedSpecialties([]);
-    setSortBy("");
   };
 
   if (isLoading) {
@@ -115,13 +122,16 @@ const Index = () => {
           />
         </div>
         <div className="md:col-span-3 space-y-4">
-          {filteredDoctors.map((doctor) => (
-            <DoctorCard key={doctor.id} doctor={doctor} />
-          ))}
-          {filteredDoctors.length === 0 && (
-            <p className="text-center text-gray-500 py-8">
-              No doctors found matching your criteria.
-            </p>
+          {filteredDoctors.length > 0 ? (
+            filteredDoctors.map((doctor) => (
+              <DoctorCard key={doctor.id} doctor={doctor} />
+            ))
+          ) : (
+            <div className="bg-white p-8 rounded-lg shadow text-center">
+              <p className="text-gray-500">
+                No doctors found matching your criteria.
+              </p>
+            </div>
           )}
         </div>
       </div>
